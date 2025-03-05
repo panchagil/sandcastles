@@ -1,4 +1,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://panchagil.github.io/sandcastles/sitemap.xml
+Sitemap: https://alshedivat.github.io/al-folio/sitemap.xml
