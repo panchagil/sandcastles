@@ -23,7 +23,7 @@
       <!-- Navbar -->
       <nav class="navbar navbar-light navbar-expand-sm fixed-top" role="navigation">
         <div class="container">
-         <a class="navbar-brand title font-weight-lighter" href="/sandcastles/"> F.G.U </a>
+         <a class="navbar-brand title font-weight-lighter" href="https://panchagil.github.io"> F.G.U </a>
           <div class="collapse navbar-collapse">
             <ul class="navbar-nav ml-auto flex-nowrap">
               <li class="nav-item active">
@@ -53,10 +53,10 @@
 </p>
 <header>
 <article class="post-content">
-<p>I've had the same gmail account since 2004 and I no longer know what is in there. Exploring 20 years of accumulated history using the Gmail App or other Email apps doesn't work very well. These apps where not designed for this type of analysis. Instead, I've decided to run my own custom exploratory analysis, based on the data I can download using GMail's API.</p>
+<p>I've had the same Gmail account since 2004, and I no longer know what is in there. Exploring 20 years of accumulated history using the Gmail app or other email apps doesn't work very well. These apps were not designed for this type of analysis. Instead, I've decided to run my own custom exploratory analysis based on the data I can download using the Gmail API.</p>
 <h2 id="getting-the-data">Getting the Data</h2>
-<p>I'll provide more details on how I got the data and the processing I did to extract the fields I'm intersted in. But the basics are that I used the <a href="https://developers.google.com/gmail/api/quickstart/python">Gmail API for Python</a> and downloaded all the <a href="https://developers.google.com/gmail/api/reference/rest/v1/users.messages#Message">Messages</a> from by two gmail accounts, from the years 2004 to 2024. From the payload, I only download the Headers which include the email's date, sender, and title.</p>
-<p>After combining the data from the Message and Headers, each entry includes</p>
+<p>I'll provide more details on how I got the data in a future post. But the basics are that I used the <a href="https://developers.google.com/gmail/api/quickstart/python">Gmail API for Python</a> and downloaded all the <a href="https://developers.google.com/gmail/api/reference/rest/v1/users.messages#Message">Messages</a> from my Gmail accounts, from the years 2004 to 2024. From the payload, I only downloaded the headers which include the email's date, sender, and title.</p>
+<p>After combining the data from the Message and Headers, each entry includes:</p>
 <pre class="language-json" tabindex="0"><code class="language-json"><span class="token comment">// Entry</span>
 <span class="token punctuation">{</span>
   <span class="token property">"id"</span><span class="token operator">:</span> string<span class="token punctuation">,</span>
@@ -69,32 +69,32 @@
   <span class="token property">"sender_address"</span><span class="token operator">:</span> string<span class="token punctuation">,</span>
   <span class="token property">"title"</span><span class="token operator">:</span> string<span class="token punctuation">,</span>
 <span class="token punctuation">}</span></code></pre>
-<p>The sender address string has the format <code>local-part@domain</code>, where domain sometimes contains a subdomain. For example, in the address <code>recommendations@explore.pinterest.com</code> the domain is the string <code>explore.pinterest.com</code> where the first part is the subdomain, an the rest is the root domain: <code>{subdomain: explore, root_domain: pinterest.com}</code>.</p>
-<h2 id="exploratory-data-analysis">Exploratory data analysis</h2>
+<p>The sender address string has the format <code>local-part@domain</code>, where the domain sometimes contains a subdomain. For example, in the address <code>recommendations@explore.pinterest.com</code>, the domain is the string <code>explore.pinterest.com</code> where the first part is the subdomain, and the rest is the root domain: <code>{subdomain: explore, root_domain: pinterest.com}</code>.</p>
+<h2 id="exploratory-data-analysis">Exploratory Data Analysis</h2>
 <blockquote>
-<p>While working on this analysis, I'm reading the amazing book &quot;Visualization Analysis &amp; Design&quot; by Tamara Munzner. Much of what I present here is based on the topics of this book, and I might revisit some of the visualization after I finish reading.</p>
+<p>While working on this analysis, I'm reading the amazing book &quot;Visualization Analysis &amp; Design&quot; by Tamara Munzner. Much of what I present here is based on the topics of this book, and I might revisit some of the visualizations after I finish reading.</p>
 </blockquote>
-<p class="mb-1">I'll look at the data starting on Jan, 2005 and ending on Dec 2024, to have 20 full years of data. Let's first get some basic statistics to get an idea of the amount of data I have:</p>
+<p>I'll look at the data starting in January 2005 and ending in December 2024, to have 20 full years of data. Let's first get some basic statistics to get an idea of the amount of data I have:</p>
 <ul>
-<li>The messages span 7,302 days, approx. 240 months</li>
-<li>There are 104,776 messages, comming from 82,842 different threads of conversation</li>
-<li>There messages come from 5,255 unique email addresses, counting 2,383 different @domains (1,833 different <em>root</em> domains)</li>
-<li>There are 35 different labels used, and 87.9% of the messages have one or more label.</li>
+<li>The messages span 7,302 days, approximately 240 months.</li>
+<li>There are 104,776 messages, coming from 82,842 different threads of conversation.</li>
+<li>These messages come from 5,255 unique email addresses, counting 2,383 different @domains (1,833 different root domains).</li>
+<li>There are 35 different labels used, and 87.9% of the messages have one or more labels.</li>
 </ul>
 <h3 id="messages-count">Messages Count</h3>
-<p>The first plot below shows the volume of messages over time. We can see the number of emails increases until  2010, and it starts to decrease until 2014 where it picks back up. The year with more messages is 2010, with almost 10k emails, and the one with less is 2014 with close to 2k messages.</p>
+<p>The first plot below shows the volume of messages over time. We can see the number of emails increases until 2010, and it starts to decrease until 2014 when it picks back up. The year with the most messages is 2010, with almost 10k emails, and the one with the fewest is 2014 with close to 2k messages.</p>
 <p><picture><source type="image/webp" srcset="/sandcastles/posts/2025/03/gmail_exploratory_data_analysis/VjUiqTAVzf-1200.webp 1200w"><img src="/sandcastles/posts/2025/03/gmail_exploratory_data_analysis/VjUiqTAVzf-1200.jpeg" alt="Plot, messages per year" title="Message count by Year" class="plot" width="1200" height="400"></picture></p>
-<p>The second plot shows the details per month of the year. Although we loose the precision of our bar plot, this heatmap can helps us see if there is any seasonal distribution. For example, we see that in 2010 the increase in emails starts rapidly around March and decays in June.</p>
-<p><strong>Can we map the changes to events in my life?</strong> Interestingly, 2010 was my last year in collegue and March-June was the first semester. I graduated highschool in Dec 2004 and started my undergrad in March 2005. I graduated from undergrad+master in Dec 2010, and moved to the US in Jan 2011. I started my PhD in Sept 2013, graduating in Sept 2019.</p>
+<p>The second plot shows the details per month of the year. Although we lose the precision of our first plot, this heatmap can help us see if there is any seasonal distribution. For example, in 2010 the increase in emails starts rapidly around March and declines in June.</p>
+<p><strong>Can we map the changes to events in my life?</strong> Interestingly, 2010 was my last year in college and March-June was the first semester. I graduated high school in Dec 2004 and started my undergrad in March 2005. I graduated from undergrad+master in December 2010 and moved to the US in Jan 2011. I started my PhD in September 2013, graduating in September 2019.</p>
 <p><picture><source type="image/webp" srcset="/sandcastles/posts/2025/03/gmail_exploratory_data_analysis/HxVEhzR5Gl-1200.webp 1200w"><img src="/sandcastles/posts/2025/03/gmail_exploratory_data_analysis/HxVEhzR5Gl-1200.jpeg" alt="Plot, messages per year/month" title="Message count by Month" class="plot" width="1200" height="400"></picture></p>
-<h3 id="thread-lenght">Thread Lenght</h3>
-<p>In Gmail, email threads are chains of related messages which are group together by subject line. I'm interested in understanding how the thread length (i.e., number of messages in the thread chain) changed over time. For that, I computed the average thread lenght for each year. The plot below shows how the average thread lenght has decreased, from a high of 1.8 in 2007 to almost 1.1 in 2024. I believe this is a big clue of the change in usage of my gmail: a thread count of 1.0 means these are emails that do not require any reply.</p>
-<p>We can also see that, while the message count is highest in 2010, the thread count (number of different threads) is highest in 2018-2020.</p>
-<p><picture><source type="image/webp" srcset="/sandcastles/posts/2025/03/gmail_exploratory_data_analysis/G-uV3bORMl-1200.webp 1200w"><img src="/sandcastles/posts/2025/03/gmail_exploratory_data_analysis/G-uV3bORMl-1200.jpeg" alt="Plot, mean thread length per year" title="Thread Lenght by Year" class="plot" width="1200" height="600"></picture></p>
-<p>To undestand the change better, I want to show the variance of  thread lenght, but there are a few cases with hundreds of messages per-thread (outliers) that make visualizing this a bit more difficult. The plot below shows an histogram of the thread lenght, but I've used a logarithim scale for the thread count so we can see the few cases with lenght 100.<br>
-<picture><source type="image/webp" srcset="/sandcastles/posts/2025/03/gmail_exploratory_data_analysis/sxM1tjIPIj-1200.webp 1200w"><img src="/sandcastles/posts/2025/03/gmail_exploratory_data_analysis/sxM1tjIPIj-1200.jpeg" alt="Thread length histogram" title="Thread Lenght Histogram" class="plot" width="1200" height="400"></picture></p>
-<h3 id="next">Next ...</h3>
-<p>In the next post, I'll look into the different domains where the data comes from, and the labels provided by gmail.</p>
+<h3 id="thread-length">Thread Length</h3>
+<p>In Gmail, email threads are chains of related messages grouped by subject line. I'm interested in understanding how the thread length (i.e., the number of messages in the thread chain) changed over time. For that, I computed the average thread length for each year. The plot below shows how the average thread length has decreased, from a high of 1.8 in 2007 to almost 1.1 in 2024. I believe this is a big clue of the change in usage of my Gmail: a thread count of 1.0 means these emails do not require any reply.</p>
+<p>We can also see that, while the message count was highest in 2010, the thread count (number of different threads) was highest in 2018-2020.</p>
+<p><picture><source type="image/webp" srcset="/sandcastles/posts/2025/03/gmail_exploratory_data_analysis/G-uV3bORMl-1200.webp 1200w"><img src="/sandcastles/posts/2025/03/gmail_exploratory_data_analysis/G-uV3bORMl-1200.jpeg" alt="Plot, mean thread length per year" title="Thread Length by Year" class="plot" width="1200" height="600"></picture></p>
+<p>To understand the change better, I want to show the variance of thread length, but there are a few cases with hundreds of messages per thread (outliers) that make visualizing this a bit more difficult. The plot below shows a histogram of the thread length, but I've used a logarithmic scale for the thread count so we can see the few cases with length 100.</p>
+<p><picture><source type="image/webp" srcset="/sandcastles/posts/2025/03/gmail_exploratory_data_analysis/sxM1tjIPIj-1200.webp 1200w"><img src="/sandcastles/posts/2025/03/gmail_exploratory_data_analysis/sxM1tjIPIj-1200.jpeg" alt="Thread length histogram" title="Thread Length Histogram" class="plot" width="1200" height="400"></picture></p>
+<h3 id="next">Next...</h3>
+<p>In the next post, I'll look into the different domains where the data comes from, and the labels provided by Gmail.</p>
 
 </article>
 </header></header></div>
