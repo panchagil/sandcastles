@@ -1,0 +1,28 @@
+{
+  "name": "sandcastles-blog",
+  "version": "1.0.0",
+ "scripts": {
+    "build": "npx @11ty/eleventy",
+    "build-ghpages": "npx @11ty/eleventy --pathprefix=/sandcastles/",
+    "start": "npx @11ty/eleventy --serve --quiet",
+		"start-ghpages": "npx @11ty/eleventy --pathprefix=/sandcastles/ --serve --quiet",
+    "debug": "DEBUG=* npx eleventy",
+    "debugstart": "DEBUG=* npx eleventy --serve",
+    "test": "jest"
+  },
+  "repository": {
+		"type": "git",
+		"url": "git://github.com/panchagil/sandcastles.git"
+	},
+  "license": "MIT",
+	"engines": {
+		"node": ">=18"
+	},
+  "dependencies": {
+    "@11ty/eleventy": "^3.0.0",
+    "@11ty/eleventy-img": "^6.0.1",
+    "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.0",
+    "markdown-it-attrs": "^4.3.1"
+  },
+  "type": "module"
+}
